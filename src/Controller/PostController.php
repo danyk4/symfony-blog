@@ -8,7 +8,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class PostController extends AbstractController
 {
-
     #[Route('/post/show', name: 'post_show')]
     public function show(): Response
     {
