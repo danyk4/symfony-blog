@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,9 +12,13 @@ use Symfony\Component\Routing\Attribute\Route;
 final class DefaultController extends AbstractController
 {
     #[Route('/', name: 'homepage')]
-    public function homepage(): Response
+    public function homepage(EntityManagerInterface $em): Response
     {
-        return $this->render('default/homepage.html.twig');
+        $posts = $em->getRepository(Post::class)->findAll();
+
+        return $this->render('default/homepage.html.twig', [
+            'posts' => $posts,
+        ]);
     }
 
     #[Route('/about', name: 'about')]
