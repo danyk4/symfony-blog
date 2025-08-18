@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,5 +43,40 @@ final class DefaultController extends AbstractController
         // $em->flush();
         //
         // dd($user);
+    }
+
+    public function categoriesWidget(EntityManagerInterface $em): Response
+    {
+        // 1 sql query
+        $list = $em->getRepository(Category::class)->getPopularList();
+
+        // INNER JOIN instead LEFT in CategoryRepository
+//        $list = array_filter($categories, function($category) {
+//            return $category['postsCnt'] > 0;
+//        });
+
+        // 6 sql queries
+//        $categories = $em->getRepository(Category::class)->findAll();
+//
+//        $list = [];
+//        foreach ($categories as $category) {
+//            $postsCnt = $em->getRepository(Post::class)->count(['category' => $category]);
+//
+//            if ($postsCnt > 0) {
+//                $list[] = [
+//                    'name'     => $category,
+//                    'postsCnt' => $postsCnt,
+//                ];
+//            }
+//        }
+
+        return $this->render('default/widget/categories.html.twig', [
+            'list' => $list,
+        ]);
+    }
+
+    public function popularPostsWidget(): Response
+    {
+        return $this->render('default/widget/popularPosts.html.twig');
     }
 }
