@@ -50,7 +50,7 @@ final class DefaultController extends AbstractController
     }
 
     #[Route('/test', name: 'test')]
-    public function test(EntityManagerInterface $em): void
+    public function test(EntityManagerInterface $em): Response
     {
         // $user = $em->getRepository(User::class)->find(1);
         //
@@ -58,11 +58,11 @@ final class DefaultController extends AbstractController
         // $em->flush();
         //
         // dd($user);
+        return new Response('Hello, Test Route!');
     }
 
     public function categoriesWidget(EntityManagerInterface $em): Response
     {
-        // 1 sql query
         $list = $em->getRepository(Category::class)->getPopularList();
 
         // INNER JOIN instead LEFT in CategoryRepository
@@ -70,7 +70,6 @@ final class DefaultController extends AbstractController
 //            return $category['postsCnt'] > 0;
 //        });
 
-        // 6 sql queries
 //        $categories = $em->getRepository(Category::class)->findAll();
 //
 //        $list = [];
