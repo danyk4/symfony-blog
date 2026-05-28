@@ -27,7 +27,8 @@ class CategoryRepository extends ServiceEntityRepository
             GROUP BY category.id
         ';
 
-        return $this->getEntityManager()
+        return $this
+            ->getEntityManager()
             ->getConnection()
             ->prepare($sql)
             ->executeQuery()

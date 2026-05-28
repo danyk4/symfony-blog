@@ -16,6 +16,7 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    // to use post.category in twig
     public function __toString(): string
     {
         return $this->name;

@@ -17,7 +17,7 @@ final class DefaultController extends AbstractController
     #[Route('/', name: 'homepage')]
     public function homepage(EntityManagerInterface $em): Response
     {
-        $posts = $em->getRepository(Post::class)->findAll();
+        $posts = $em->getRepository(Post::class)->findBy([], ['publishedAt' => 'DESC']);
 
         return $this->render('default/homepage.html.twig', [
             'posts' => $posts,
