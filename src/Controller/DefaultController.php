@@ -6,10 +6,15 @@ use App\Entity\Category;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\FeedbackForm;
+use App\Repository\PostRepository;
+use App\Service\ExportCsv;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class DefaultController extends AbstractController
@@ -41,12 +46,18 @@ final class DefaultController extends AbstractController
             $em->persist($feedback);
             $em->flush();
 
-            return $this->render('default/thanks.html.twig');
+            return $this->redirectToRoute('thanks');
         }
 
         return $this->render('default/contact.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/thanks', name: 'thanks')]
+    public function thanks(): Response
+    {
+        return $this->render('default/thanks.html.twig');
     }
 
     #[Route('/test', name: 'test')]
@@ -92,5 +103,21 @@ final class DefaultController extends AbstractController
     public function popularPostsWidget(): Response
     {
         return $this->render('default/widget/popularPosts.html.twig');
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route('/export', name: 'export')]
+    public function exportAction(ExportCsv $exportCsv, PostRepository $postRepository): BinaryFileResponse
+    {
+        $list = $postRepository->getAllItems();
+        $file = $exportCsv->run($list);
+
+        $response = $this->file($file);
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export-data.csv');
+
+        return $response;
     }
 }
